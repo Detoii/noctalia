@@ -942,6 +942,7 @@ _noctalia_sources = files(
   'src/compositors/sway/sway_keyboard_backend.cpp',
   'src/compositors/sway/sway_output_backend.cpp',
   'src/compositors/sway/sway_workspace_backend.cpp',
+  'src/compositors/zoolander/zoolander_keyboard_backend.cpp',
   'src/compositors/kde/kwin_active_window.cpp',
   'src/compositors/kde/kwin_workspace_backend.cpp',
   'src/compositors/labwc/labwc_workspace_backend.cpp',
@@ -1377,6 +1378,7 @@ if build_tests
     'window_switcher_shortcut_state',
     'workspace_alert_service',
     'workspaces_widget',
+    'zoolander_keyboard_backend',
   ]
 
   foreach _test_group : [

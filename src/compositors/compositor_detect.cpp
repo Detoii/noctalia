@@ -135,4 +135,6 @@ namespace compositors {
     return cached;
   }
 
+  bool isZoolander() { return StringUtils::containsInsensitive(envHint(), "zoolander"); }
+
 } // namespace compositors

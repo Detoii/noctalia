@@ -18,6 +18,7 @@ public:
   virtual ~KeyboardLayoutBackend() = default;
 
   virtual bool isAvailable() const noexcept = 0;
+  virtual bool supportsCycle() const noexcept { return isAvailable(); }
   virtual bool cycleLayout() const = 0;
   virtual std::optional<KeyboardLayoutState> layoutState() const = 0;
   virtual std::optional<std::string> currentLayoutName() const = 0;
@@ -28,6 +29,7 @@ public:
   virtual void setChangeCallback(ChangeCallback /*callback*/) {}
   virtual int pollFd() const noexcept { return -1; }
   virtual short pollEvents() const noexcept { return POLLIN | POLLHUP | POLLERR; }
+  virtual int pollTimeoutMs() const noexcept { return -1; }
   virtual void dispatchPoll(short /*revents*/) {}
   virtual void cleanup() {}
 };

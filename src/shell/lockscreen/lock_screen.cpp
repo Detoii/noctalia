@@ -1397,7 +1397,7 @@ void LockScreen::applyIndicatorsToSurface(LockSurface& surface) const {
   std::string layoutLabel;
   if (m_compositorPlatform != nullptr) {
     hasMultipleLayouts = m_compositorPlatform->keyboardLayoutNames().size() > 1;
-    switchable = m_compositorPlatform->hasKeyboardLayoutBackend();
+    switchable = m_compositorPlatform->canCycleKeyboardLayout();
     const std::string layoutName = m_compositorPlatform->currentKeyboardLayoutName();
     layoutLabel = m_configService != nullptr
         ? resolveKeyboardLayoutLabel(

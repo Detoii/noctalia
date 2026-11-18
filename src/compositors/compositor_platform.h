@@ -196,13 +196,15 @@ public:
   const char* workspaceBackendName() const noexcept;
 
   bool cycleKeyboardLayout() const;
-  bool hasKeyboardLayoutBackend() const noexcept;
+  bool canCycleKeyboardLayout() const noexcept;
+
   std::optional<KeyboardLayoutState> keyboardLayoutState() const;
   std::string currentKeyboardLayoutName() const;
   std::vector<std::string> keyboardLayoutNames() const;
 
   void setKeyboardLayoutChangeCallback(ChangeCallback callback);
   void addKeyboardLayoutPollFds(std::vector<pollfd>& fds) const;
+  int keyboardLayoutPollTimeoutMs() const noexcept;
   void dispatchKeyboardLayoutPoll(const std::vector<pollfd>& fds, std::size_t startIdx);
 
   bool requestSessionExit() const;

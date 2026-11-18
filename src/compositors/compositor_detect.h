@@ -37,5 +37,6 @@ namespace compositors {
   inline bool isDwl() { return detect() == CompositorKind::Dwl; }
   inline bool isKde() { return detect() == CompositorKind::Kde; }
   inline bool isUmbriel() { return detect() == CompositorKind::Umbriel; }
+  bool isZoolander();
 
 } // namespace compositors

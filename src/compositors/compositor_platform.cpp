@@ -1,4 +1,5 @@
 #include "compositors/compositor_platform.h"
+#include "compositors/zoolander/zoolander_keyboard_backend.h"
 
 #include "compositors/compositor_detect.h"
 #include "compositors/compositor_event_subscriptions.h"
@@ -431,6 +432,9 @@ namespace {
 
   [[nodiscard]] std::unique_ptr<KeyboardLayoutBackend>
   createKeyboardLayoutBackend(compositors::CompositorRuntimeRegistry& runtimeRegistry) {
+    if (compositors::isZoolander()) {
+      return std::make_unique<ZoolanderKeyboardBackend>();
+    }
     switch (compositors::detect()) {
     case compositors::CompositorKind::Niri:
       return std::make_unique<KeyboardLayoutBackendAdapter<NiriKeyboardBackend>>(runtimeRegistry.niri());
@@ -1709,8 +1713,8 @@ bool CompositorPlatform::cycleKeyboardLayout() const {
   return m_keyboardLayoutBackend != nullptr && m_keyboardLayoutBackend->cycleLayout();
 }
 
-bool CompositorPlatform::hasKeyboardLayoutBackend() const noexcept {
-  return m_keyboardLayoutBackend != nullptr && m_keyboardLayoutBackend->isAvailable();
+bool CompositorPlatform::canCycleKeyboardLayout() const noexcept {
+  return m_keyboardLayoutBackend != nullptr && m_keyboardLayoutBackend->supportsCycle();
 }
 
 std::optional<KeyboardLayoutState> CompositorPlatform::keyboardLayoutState() const {
@@ -1748,6 +1752,18 @@ void CompositorPlatform::setKeyboardLayoutChangeCallback(ChangeCallback callback
   if (m_keyboardLayoutBackend != nullptr) {
     m_keyboardLayoutBackend->setChangeCallback(m_keyboardLayoutChangeCallback);
     m_keyboardLayoutBackend->connectSocket();
+    if (compositors::isZoolander()) {
+      m_wayland.setKeyboardLayoutChangeCallback([this] {
+        if (m_keyboardLayoutBackend != nullptr && m_keyboardLayoutBackend->currentLayoutName().has_value()) {
+          return;
+        }
+        if (m_keyboardLayoutChangeCallback) {
+          m_keyboardLayoutChangeCallback();
+        }
+      });
+    } else {
+      m_wayland.setKeyboardLayoutChangeCallback({});
+    }
   } else {
     // No compositor IPC: the seat's xkb group is the only layout source, so it drives change events.
     m_wayland.setKeyboardLayoutChangeCallback(m_keyboardLayoutChangeCallback);
@@ -1762,9 +1778,14 @@ void CompositorPlatform::addKeyboardLayoutPollFds(std::vector<pollfd>& fds) cons
   }
 }
 
+int CompositorPlatform::keyboardLayoutPollTimeoutMs() const noexcept {
+  return m_keyboardLayoutBackend != nullptr ? m_keyboardLayoutBackend->pollTimeoutMs() : -1;
+}
+
 void CompositorPlatform::dispatchKeyboardLayoutPoll(const std::vector<pollfd>& fds, std::size_t startIdx) {
-  if (m_keyboardLayoutBackend != nullptr && m_keyboardLayoutBackend->pollFd() >= 0 && startIdx < fds.size()) {
-    m_keyboardLayoutBackend->dispatchPoll(fds[startIdx].revents);
+  if (m_keyboardLayoutBackend != nullptr) {
+    const bool hasFd = m_keyboardLayoutBackend->pollFd() >= 0 && startIdx < fds.size();
+    m_keyboardLayoutBackend->dispatchPoll(hasFd ? fds[startIdx].revents : 0);
   }
 }
 

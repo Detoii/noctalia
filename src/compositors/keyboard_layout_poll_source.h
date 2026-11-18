@@ -11,6 +11,8 @@ public:
     m_platform.dispatchKeyboardLayoutPoll(fds, startIdx);
   }
 
+  int pollTimeoutMs() const override { return m_platform.keyboardLayoutPollTimeoutMs(); }
+
 protected:
   void doAddPollFds(std::vector<pollfd>& fds) override { m_platform.addKeyboardLayoutPollFds(fds); }
 

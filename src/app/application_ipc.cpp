@@ -418,8 +418,8 @@ void Application::initIpc() {
     if (!noctalia::ipc::splitWords(args).empty()) {
       return "error: keyboard-layout-cycle takes no arguments\n";
     }
-    if (!m_compositorPlatform.hasKeyboardLayoutBackend()) {
-      return "error: this compositor has no keyboard layout backend\n";
+    if (!m_compositorPlatform.canCycleKeyboardLayout()) {
+      return "error: keyboard layout cycling is not supported by this compositor\n";
     }
     if (!m_compositorPlatform.cycleKeyboardLayout()) {
       return "error: failed to cycle the keyboard layout\n";

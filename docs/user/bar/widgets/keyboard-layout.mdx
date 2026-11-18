@@ -11,6 +11,8 @@ While fcitx5 is running with its tray icon enabled, the widget shows the active 
 
 Left-click cycles layouts using the compositor backend when supported. Bind `left` to an `exec` action to run a custom command instead - see [Widget Actions](/noctalia/bar/actions/).
 
+On Zoolander, a compositor with keyboard-layout subscriptions reports layout changes even when Noctalia does not have keyboard focus. Switch layouts with your Zoolander shortcut; left-click cycling is not supported by its backend.
+
 | Setting                   | Type   | Default      | Description                                                                                                      |
 | ------------------------- | ------ | ------------ | ---------------------------------------------------------------------------------------------------------------- |
 | `hide_when_single_layout` | bool   | `false`      | Hide the widget unless more than one keyboard layout is configured                                               |
